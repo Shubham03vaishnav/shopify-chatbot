@@ -225,6 +225,14 @@ def debug_chat(msg: str):
         "GREET_RE": bool(GREET_RE.search(msg)),
         "PRICE_RE": bool(PRICE_RE.search(msg)),
     }
+    
+@app.get("/debug-shopify")
+def debug_shopify():
+    products = get_shopify_products()
+    return {
+        "total_products": len(products),
+        "first_product": products[0]["title"] if products else "none"
+    }
 
 @app.post("/chat")
 def chat(req: ChatRequest):
