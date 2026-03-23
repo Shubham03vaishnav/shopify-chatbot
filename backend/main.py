@@ -320,6 +320,7 @@ def chat(req: ChatRequest):
         return {"type": "text", "text": f"Sorry, I couldn't find any {color} products. Want to see all products instead?"}
 
     # ── All products ──
+    print(f"PRODUCT_RE check: {bool(PRODUCT_RE.search(msg))} for msg: {msg}")
     if PRODUCT_RE.search(msg):
         products = get_shopify_products()
         keyword = msg.lower()
@@ -380,6 +381,7 @@ def chat(req: ChatRequest):
         return {"type": "text", "text": "No problem! Feel free to ask anything else. 😊"}
 
     # ── RAG Fallback ──
+    print(f"Reached RAG fallback for msg: {msg}")
     chunks = search_knowledge(msg)
     if chunks:
         context = "\n\n".join(chunks)
