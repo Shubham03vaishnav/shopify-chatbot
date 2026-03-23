@@ -217,6 +217,15 @@ def startup():
 def root():
     return {"status": "Shopify AI Chatbot running"}
 
+@app.get("/debug-chat/{msg}")
+def debug_chat(msg: str):
+    return {
+        "msg": msg,
+        "PRODUCT_RE": bool(PRODUCT_RE.search(msg)),
+        "GREET_RE": bool(GREET_RE.search(msg)),
+        "PRICE_RE": bool(PRICE_RE.search(msg)),
+    }
+
 @app.post("/chat")
 def chat(req: ChatRequest):
     msg = req.message.strip()
