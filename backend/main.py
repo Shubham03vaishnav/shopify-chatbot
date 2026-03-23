@@ -50,7 +50,7 @@ DISCOUNT_RE   = re.compile(r'\b(discount|offer|sale|promo|coupon|deal|off)\b', r
 RETURN_RE     = re.compile(r'\b(return|refund|exchange|replace|cancel|policy)\b', re.I)
 THANKS_RE     = re.compile(r'\b(thank|thanks|thankyou|thank you|thx|ty)\b', re.I)
 HELP_RE       = re.compile(r'\b(help|support|assist|guide|faq)\b', re.I)
-YES_RE        = re.compile(r'\b(yes|yeah|yep|yup|sure|ok|okay|proceed|go ahead|show|display)\b', re.I)
+YES_RE        = re.compile(r'\b(yes+|yeah|yep|yup|sure|ok|okay|proceed|go ahead|show|display)\b', re.I)
 NO_RE         = re.compile(r'\b(no|nope|nah|dont|don\'t|not)\b', re.I)
 BYE_RE        = re.compile(r'\b(bye|goodbye|see you|cya|tata|later)\b', re.I)
 LOVE_RE       = re.compile(r'\b(love|awesome|amazing|great|excellent|fantastic|wonderful|brilliant)\b', re.I)
@@ -308,6 +308,20 @@ def chat(req: ChatRequest):
     # ── Cart ──
     if CART_RE.search(msg):
         return {"type": "cart"}
+    
+    # ── Price ──
+    if PRICE_RE.search(msg) and not PRODUCT_RE.search(msg):
+        if COLOR_RE.search(msg):
+            color = COLOR_RE.search(msg).group(0)
+            products = get_shopify_products()
+            matched = [p for p in products if color.lower() in p["title"].lower()]
+            if matched:
+                p = matched[0]
+                price = p.get("variants", [{}])[0].get("price", "N/A")
+                session_state[session_id] = {"waiting_confirmation": f"show_single_product_{p['title']}"}
+                return {"type": "text", "text": f"The {p['title']} is priced at Rs. {price}. Would you like to see the product? 😊"}
+        session_state[session_id] = {"waiting_confirmation": "show_products"}
+        return {"type": "text", "text": "Our products are competitively priced! Would you like me to show you all products with prices? 😊"}
 
     # ── Products with color ──
     if COLOR_RE.search(msg) and PRODUCT_RE.search(msg):
@@ -332,19 +346,6 @@ def chat(req: ChatRequest):
                 return format_products_response(matched)
         return format_products_response(products)
 
-    # ── Price ──
-    if PRICE_RE.search(msg) and not PRODUCT_RE.search(msg):
-        if COLOR_RE.search(msg):
-            color = COLOR_RE.search(msg).group(0)
-            products = get_shopify_products()
-            matched = [p for p in products if color.lower() in p["title"].lower()]
-            if matched:
-                p = matched[0]
-                price = p.get("variants", [{}])[0].get("price", "N/A")
-                session_state[session_id] = {"waiting_confirmation": f"show_single_product_{p['title']}"}
-                return {"type": "text", "text": f"The {p['title']} is priced at Rs. {price}. Would you like to see the product? 😊"}
-        session_state[session_id] = {"waiting_confirmation": "show_products"}
-        return {"type": "text", "text": "Our products are competitively priced! Would you like me to show you all products with prices? 😊"}
 
     # ── Order tracking ──
     if ORDER_RE.search(msg):
