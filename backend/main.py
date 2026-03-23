@@ -333,7 +333,7 @@ def chat(req: ChatRequest):
         return format_products_response(products)
 
     # ── Price ──
-    if PRICE_RE.search(msg):
+    if PRICE_RE.search(msg) and not PRODUCT_RE.search(msg):
         if COLOR_RE.search(msg):
             color = COLOR_RE.search(msg).group(0)
             products = get_shopify_products()
@@ -365,7 +365,7 @@ def chat(req: ChatRequest):
 
     # ── Contact ──
     if CONTACT_RE.search(msg):
-        return {"type": "text", "text": "📞 You can reach us at:\n📧 Email: support@store.com\n💬 WhatsApp: +91-XXXXXXXXXX\n⏰ Available: Mon-Sat, 10AM-6PM"}
+        return {"type": "text", "text": "📞 You can reach us at:\n📧 Email: support@ai-chatbot-lab.com\n💬 WhatsApp: +91-XXXXXXXXXX\n⏰ Available: Mon-Sat, 10AM-6PM"}
 
     # ── Help ──
     if HELP_RE.search(msg):
