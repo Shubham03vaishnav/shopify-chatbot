@@ -317,6 +317,12 @@ def chat(req: ChatRequest):
         matched = []
         if keywords:
             matched = [p for p in products if any(k in p["title"].lower() for k in keywords)]
+        # Also check color specifically
+        if COLOR_RE.search(msg):
+            color = COLOR_RE.search(msg).group(0).lower()
+            color_matched = [p for p in products if color in p["title"].lower()]
+            if color_matched:
+                matched = color_matched
         if matched:
             p = matched[0]
             price = p.get("variants", [{}])[0].get("price", "N/A")
