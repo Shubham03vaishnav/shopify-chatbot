@@ -116,7 +116,7 @@ Bot: We have a hassle-free return policy! You can return products within 7 days.
 ## 🙋 Author
 
 **Shubham Vaishnav**  
-[GitHub](https://github.com/Shubham03vaishnav) · [LinkedIn](https://linkedin.com/in/your-profile)
+[GitHub](https://github.com/Shubham03vaishnav) · [LinkedIn](https://www.linkedin.com/in/shubham-vaishnav-b79133271)
 
 ## 📄 License
 
