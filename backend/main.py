@@ -309,8 +309,8 @@ def chat(req: ChatRequest):
     if CART_RE.search(msg):
         return {"type": "cart"}
     
-    # ── Price ──
-     if PRICE_RE.search(msg) and PRODUCT_RE.search(msg):
+    # ── Price with product name ──
+    if PRICE_RE.search(msg) and PRODUCT_RE.search(msg):
         products = get_shopify_products()
         stop = {"show","me","the","a","an","get","find","i","want","need","buy","some","any","all","products","items","price","cost","rate","much","how","is","of","what"}
         keywords = [k for k in msg.lower().split() if k not in stop and len(k) > 2]
@@ -322,6 +322,20 @@ def chat(req: ChatRequest):
             price = p.get("variants", [{}])[0].get("price", "N/A")
             session_state[session_id] = {"waiting_confirmation": f"show_single_product_{p['title']}"}
             return {"type": "text", "text": f"The {p['title']} is priced at Rs. {price}. Would you like to see the product? 😊"}
+
+    # ── Price only ──
+    if PRICE_RE.search(msg) and not PRODUCT_RE.search(msg):
+        if COLOR_RE.search(msg):
+            color = COLOR_RE.search(msg).group(0)
+            products = get_shopify_products()
+            matched = [p for p in products if color.lower() in p["title"].lower()]
+            if matched:
+                p = matched[0]
+                price = p.get("variants", [{}])[0].get("price", "N/A")
+                session_state[session_id] = {"waiting_confirmation": f"show_single_product_{p['title']}"}
+                return {"type": "text", "text": f"The {p['title']} is priced at Rs. {price}. Would you like to see the product? 😊"}
+        session_state[session_id] = {"waiting_confirmation": "show_products"}
+        return {"type": "text", "text": "Our products are competitively priced! Would you like me to show you all products with prices? 😊"}
         
     # ── Products with color ──
     if COLOR_RE.search(msg) and PRODUCT_RE.search(msg):
