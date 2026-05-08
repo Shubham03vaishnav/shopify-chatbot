@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import requests
@@ -210,12 +210,14 @@ class ChatRequest(BaseModel):
 # ─── Startup ──────────────────────────────────────────────────────────────────
 @app.on_event("startup")
 def startup():
-    scrape_store_website()
+    # We no longer run the scraper synchronously here to avoid Render startup timeouts.
+    # It will be triggered on the first request.
+    print("Server started. Scraper will run on first request.")
 
-# ─── Endpoints ────────────────────────────────────────────────────────────────
 @app.get("/")
-def root():
-    return {"status": "Shopify AI Chatbot running"}
+def root(background_tasks: BackgroundTasks):
+    background_tasks.add_task(scrape_store_website)
+    return {"status": "Shopify AI Chatbot running", "knowledge_base": "initializing in background"}
 
 @app.get("/debug-chat/{msg}")
 def debug_chat(msg: str):
@@ -235,7 +237,9 @@ def debug_shopify():
     }
 
 @app.post("/chat")
-def chat(req: ChatRequest):
+def chat(req: ChatRequest, background_tasks: BackgroundTasks):
+    # Ensure scraper is triggered if it hasn't run yet
+    background_tasks.add_task(scrape_store_website)
     msg = req.message.strip()
     session_id = req.session_id
     state = session_state.get(session_id, {})
