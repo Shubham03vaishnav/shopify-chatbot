@@ -4,7 +4,7 @@ An intelligent AI-powered chatbot for Shopify stores that helps customers find p
 
 ## 🌟 Live Demo
 **Store:** [ai-chatbot-lab.myshopify.com](https://ai-chatbot-lab.myshopify.com)  
-**Backend API:** [shopify-chatbot-production-ce75.up.railway.app](https://shopify-chatbot-production-ce75.up.railway.app)
+**Backend API:** [shopify-ai-chatbot.onrender.com](https://shopify-ai-chatbot.onrender.com)
 
 ## ✨ Features
 
@@ -25,8 +25,8 @@ An intelligent AI-powered chatbot for Shopify stores that helps customers find p
 | Backend | FastAPI (Python) |
 | AI Model | Groq — LLaMA 3.3 70B |
 | NLP | Regex + RAG System |
-| Database | Railway Volume (JSON) |
-| Deployment | Railway |
+| Database | Render Persistent Disk (JSON) |
+| Deployment | Render |
 | Frontend | Vanilla JS embedded in Shopify |
 | Store Platform | Shopify |
 
