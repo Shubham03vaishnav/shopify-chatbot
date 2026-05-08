@@ -1,0 +1,7 @@
+api_version = "2024-01"
+
+[[extensions]]
+name = "Chatbot Embed"
+handle = "chatbot-embed"
+uid = "6c8099cd-711a-1af9-6646-1a24e7d50591ed77ded7"
+type = "theme_app_extension"
