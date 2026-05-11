@@ -7,7 +7,7 @@
       "type": "text",
       "id": "api_url",
       "label": "Backend API URL",
-      "default": "https://shopify-chatbot.onrender.com"
+      "default": "https://shopify-chatbot-ht2e.onrender.com"
     }
   ]
 }
@@ -203,10 +203,21 @@
       msgContainer.appendChild(typing);
       msgContainer.scrollTop = msgContainer.scrollHeight;
 
+      async function postChat() {
+        return axios.post(API_URL + "/chat", { message: text, session_id: sessionId }, { timeout: 60000 });
+      }
+
       try {
-        const res = await axios.post(API_URL + "/chat", { message: text, session_id: sessionId });
+        let res;
+        try {
+          res = await postChat();
+        } catch (e) {
+          // Wake up the server and retry once
+          try { await axios.get(API_URL + "/", { timeout: 30000 }); } catch(_) {}
+          res = await postChat();
+        }
         msgContainer.removeChild(typing);
-        
+
         if (res.data.type === "products") {
           messages.push({from:"bot", text: "I found some products for you:", products: res.data.products});
         } else {

@@ -228,6 +228,10 @@ def debug_chat(msg: str):
         "PRICE_RE": bool(PRICE_RE.search(msg)),
     }
     
+@app.get("/ping")
+def ping():
+    return {"status": "ok"}
+
 @app.get("/debug-shopify")
 def debug_shopify():
     products = get_shopify_products()
